@@ -22,39 +22,39 @@
 
     export default {
         props: {
-            totalCnt: {
+            totalCnt: { // 리스트 총 갯수
                 type: Number,
                 default: 0
             },
-            pageSize: {
+            pageSize: { // 읽어올 페이지 사이즈
                 type: Number,
                 default: 10
             },
-            pageButtonCnt: {
+            pageButtonCnt: { // 보여질 버튼의 갯수
                 type: Number,
                 default: 10
             },
         },
         computed: {
-            pageNo(){
+            pageNo(){ // 라우팅 페이지 번호
                 return Number(this.$route.params.pageNo) || 1;
             },
-            groupNumber(){
-                return Math.ceil((this.pageButtonCnt * this.pageNo) / (this.pageButtonCnt * this.pageSize));
+            groupNumber(){ // 그룹번호
+                return Math.ceil(this.pageNo / this.pageButtonCnt);
             },
-            groupStartNumber(){
-                return (this.groupNumber - 1) * this.pageSize + 1;
+            groupStartNumber(){ // 그룹 스타팅 넘버
+                return (this.groupNumber - 1) * this.pageButtonCnt + 1
             },
-            groupLastNumber(){
-                return Math.min(this.groupNumber * this.pageSize, this.lastPage);
+            groupLastNumber(){ // 그룹 라스트 넘버
+                return Math.min(this.groupNumber * this.pageButtonCnt, this.lastPage);
             },
-            lastPage(){
+            lastPage(){ // 마지막 페이지
                 return Math.ceil(this.totalCnt / this.pageSize);
             },
-            isLast(){
+            isLast(){ // 마지막 페이지 여부
                 return this.groupLastNumber === this.lastPage;
             },
-            buttons(){
+            buttons(){ // 그려질 버튼번호
                 const buttons = [];
                 for(let i=this.groupStartNumber; i<=this.groupLastNumber; i++) buttons.push(i);
                 return buttons;

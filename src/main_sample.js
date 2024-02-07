@@ -13,7 +13,6 @@ const START_APP = () => {
 
     const pinia = createPinia();
     pinia.use(piniaPluginPersistedState);
-    
 
     app.use(pinia)
     .use(router)

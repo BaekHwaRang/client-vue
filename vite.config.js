@@ -15,6 +15,7 @@ export default defineConfig({
 			'@': fileURLToPath(new URL('./src', import.meta.url))
 		}
 	},
+	// dev모드 게이트웨이 프록시 서버 cors
 	server: {
 		cors: false,
 		proxy: {

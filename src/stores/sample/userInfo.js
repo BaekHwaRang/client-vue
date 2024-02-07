@@ -1,6 +1,7 @@
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
 
+/* 전역 상태 react의 redux와 같음 */
 export const UserStore = defineStore(
     "user", 
     () => {
@@ -13,5 +14,7 @@ export const UserStore = defineStore(
         }
         return {user, login, logout};
     },
-    {persist: true}
+    {persist: {
+        storage:sessionStorage
+    }} // 세션 스토리지 저장
 )

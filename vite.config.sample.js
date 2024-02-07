@@ -11,6 +11,7 @@ export default defineConfig({
 	plugins: [
 		vue(),
 		vueJsx(),
+		// 샘플용 경로 틀기
 		createHtmlPlugin({
 			template: "index_sample.html",
 			entry: "src/main_sample.js"
@@ -21,6 +22,7 @@ export default defineConfig({
 			'@': fileURLToPath(new URL('./src', import.meta.url))
 		}
 	},
+	// dev모드 게이트웨이 프록시 서버 cors
 	server: {
 		cors: false,
 		proxy: {

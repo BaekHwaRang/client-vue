@@ -8,8 +8,6 @@
     </RouterLink>
 </template>
 <script>
-    import Board from './board/Board.vue';
     export default {
-        components: {Board}
     }
 </script>

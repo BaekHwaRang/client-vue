@@ -2,6 +2,10 @@
     import {mapState} from 'pinia'
     import {UserStore} from "@/stores/sample/userInfo"
     import dayjs from 'dayjs'
+    import Header from '@/components/sample/Header.vue';
+    import { MGW, boardInf } from '@/assets/js/interface';
+    //import PageingButton from '@/components/sample/PageingButton.vue';
+    import { defineAsyncComponent } from 'vue';
 </script>
 <template>
 <Header/>
@@ -20,7 +24,7 @@
                     <div class="search-wrap">
                         <label for="search" class="blind">공지사항 내용 검색</label>
                         <input id="search" type="search" name="" placeholder="검색어를 입력해주세요." v-model="filterKeyword"/>
-                        <button type="button" class="btn btn-dark" @click="this.getBoardList()">검색</button>
+                        <button type="button" class="btn btn-dark" @click="getBoardList().then(updateBoardState)">검색</button>
                     </div>
                 </form>
             </div>
@@ -52,7 +56,7 @@
                     </tr>
                 </tbody>
             </table>
-            <PageingButton :pageSize="Number(pageSize)" :totalCnt="totalCount"/>
+            <PageingButton :pageSize="Number(pageSize)" :totalCnt="totalCount" :pageButtonCnt="pageButtonCnt"/>
             <div class="pt-10" style="text-align: right;">
                 <button type="button" class="btn" @click="pageMove('Y', '/board/upload')">등록</button>
             </div>
@@ -61,30 +65,22 @@
 </section>
 </template>
 <script>
-    import Header from '@/components/sample/Header.vue';
-    import { MGW, boardInf } from '@/assets/js/interface';
-    import PageingButton from '@/components/sample/PageingButton.vue';
-    const pageButtonCnt = 10;
     export default {
         data(){
             return {
                 totalCount: 0,
                 pageSize: 10,
+                pageButtonCnt: 10,
                 boardList: [],
                 filterKeyword: '',
-                boards: {
-                    buttons: [1],
-                    pageNo: 1,
-                    pageSize: 10,
-                    groupNumber: 1,
-                    isLast: true,
-                    lastPage: 1
-                }
             }
         },
-        components: {Header, PageingButton},
+        components: {
+            Header,
+            PageingButton: defineAsyncComponent(() => import("@/components/sample/PageingButton.vue")) // Component lazy load
+        },
         created(){
-            this.$watch(
+            this.$watch( // 상태감시
                 () => this.$route.params.pageNo,
                 (toParams, previousParams) => {
                     this.getBoardList().then(this.updateBoardState)
@@ -109,28 +105,9 @@
                 });
             },
             updateBoardState(result){
-                const {total = 0, pageNo = 1, pageSize = 10, boardList = []} = result;
+                const {total = 0, boardList = []} = result;
                 this.boardList = boardList;
                 this.totalCount = total;
-
-                let buttons = [];
-                
-                const groupNumber = Math.ceil((pageButtonCnt * pageNo) / (pageButtonCnt * pageSize));
-                const groupStartNumber = (groupNumber - 1) * pageSize + 1;
-                const lastPage = Math.ceil(total / pageSize);
-                const groupLastNumber = Math.min(groupNumber * pageSize, lastPage);
-
-                for(let i=groupStartNumber; i<=groupLastNumber; i++) buttons.push(i);
-
-                this.boards = {
-                    buttons,
-                    pageNo: result.pageNo,
-                    pageSize: result.pageSize,
-                    groupStartNumber,
-                    groupNumber,
-                    isLast: lastPage === groupLastNumber,
-                    lastPage
-                }
             },
             pageMove(needLoginYn, target){
                 if(needLoginYn == 'Y' && this.user == null){
